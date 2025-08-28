@@ -1,0 +1,13 @@
+{% extends "base.html" %} {% block content %}
+<section>
+    <div class="toolbar">
+        <form id="search-form" hx-get="/ui/parts/table" hx-target="#parts-table" hx-swap="outerHTML" class="inline">
+            <input type="text" name="q" placeholder="Search by IPN, MPN or description" value="{{q or ''}}" />
+            <button type="submit">Search</button>
+        </form>
+        <a class="btn" href="/ui/parts/new">New Part</a>
+    </div>
+
+    {% include "parts/_table.html" %}
+</section>
+{% endblock %}

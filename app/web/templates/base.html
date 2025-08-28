@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>{{ title or "Inventory" }}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link href="/static/main.css" rel="stylesheet" />
+        <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+        <script src="/static/main.js" defer></script>
+    </head>
+    <body>
+        <header class="topbar">
+            <h1>Inventory</h1>
+            <nav>
+                <a href="/ui/parts">Parts</a>
+                <a href="/ui/distributors">Distributors</a>
+                <a href="/ui/po">PO</a>
+                <a href="/ui/reports/shortages">Reports</a>
+                <a href="/ui/reports/po-overdue">PO Overdue</a>
+            </nav>
+        </header>
+
+        <main class="container">{% block content %}{% endblock %}</main>
+    </body>
+</html>

@@ -1,0 +1,37 @@
+<div class="toolbar">
+    <a class="btn" href="/ui/distributors">Distributor catalog</a>
+    <a class="btn" href="/ui/parts/{{ part.id }}/distributors/new">Add distributor</a>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Distributor</th>
+            <th>PN</th>
+            <th>Preference</th>
+            <th>Price breaks</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pd in items %}
+        <tr>
+            <td>{{ pd.distributor.code }} — {{ pd.distributor.name }}</td>
+            <td>{{ pd.distributor_pn }}</td>
+            <td>{{ pd.preference }}</td>
+            <td>
+                {% if not pd.price_breaks %} — {% else %} {% for pb in pd.price_breaks|sort(attribute='min_qty') %}
+                <div>{{ pb.min_qty }} @ {{ pb.unit_price }} {{ pb.currency }}</div>
+                {% endfor %} {% endif %}
+            </td>
+            <td>
+                <a href="/ui/parts/{{ part.id }}/distributors/{{ pd.id }}/edit">Edit</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5">No distributors linked.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,67 @@
+{% if message %}
+<div class="alert {{ 'error' if error else 'ok' }}">{{ message }}</div>
+{% endif %}
+
+<form
+  method="post"
+  enctype="multipart/form-data"
+  hx-post="/ui/parts/{{ part.id }}/documents"
+  hx-encoding="multipart/form-data"
+  hx-target="#part-docs"
+  hx-swap="outerHTML"
+  class="grid"
+>
+  <fieldset>
+    <legend>Attach document</legend>
+    <label
+      >Kind
+      <select name="kind" required>
+        <option value="datasheet">Datasheet</option>
+        <option value="manual">Manual</option>
+        <option value="drawing">Drawing</option>
+        <option value="spec">Spec</option>
+        <option value="other">Other</option>
+      </select>
+    </label>
+    <label
+      >File
+      <input type="file" name="file" accept=".pdf,image/*" required />
+    </label>
+    <button type="submit">Upload</button>
+  </fieldset>
+</form>
+
+<h4>Documents</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Kind</th>
+      <th>File</th>
+      <th>Date</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for d in docs %}
+    <tr>
+      <td>{{ d.kind }}</td>
+      <td>{{ d.file_name }}</td>
+      <td>{{ d.created_at }}</td>
+      <td>
+        <!-- Download/View will be added in step 4 -->
+        <form
+          method="post"
+          action="/ui/parts/{{ part.id }}/documents/{{ d.id }}/delete"
+          style="display: inline"
+        >
+          <button type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="4">No documents.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>

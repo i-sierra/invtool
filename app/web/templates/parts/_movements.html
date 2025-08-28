@@ -1,0 +1,228 @@
+{% if message %}
+<div class="alert {{ 'error' if error else 'ok' }}">{{ message }}</div>
+{% endif %}
+
+<div class="grid">
+  <!-- Receive -->
+  <form
+    hx-post="/ui/parts/{{ part.id }}/movements/receive"
+    hx-target="#movements"
+    hx-swap="outerHTML"
+  >
+    <fieldset>
+      <legend>Receive</legend>
+      <label>
+        Location
+        <select name="location_code" required>
+          {% for code in location_codes %}
+          <option value="{{ code }}">{{ code }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        Quantity
+        <input
+          type="number"
+          name="qty"
+          step="0.000001"
+          min="0.000001"
+          required
+        />
+      </label>
+      <label
+        >Ref. Type
+        <select name="ref_type"></select>
+      </label>
+      <label
+        >Ref. ID
+        <input name="ref_id" placeholder="Reference ID" />
+      </label>
+      <label>
+        Note
+        <input name="note" placeholder="Optional note" />
+      </label>
+      <button type="submit">Receive</button>
+    </fieldset>
+  </form>
+
+  <!-- Issue -->
+  <form
+    hx-post="/ui/parts/{{ part.id }}/movements/issue"
+    hx-target="#movements"
+    hx-swap="outerHTML"
+  >
+    <fieldset>
+      <legend>Issue</legend>
+      <label>
+        Location
+        <select name="location_code" required>
+          {% for code in location_codes %}
+          <option value="{{ code }}">{{ code }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        Quantity
+        <input
+          type="number"
+          name="qty"
+          step="0.000001"
+          min="0.000001"
+          required
+        />
+      </label>
+      <label
+        >Ref. Type
+        <select name="ref_type"></select>
+      </label>
+      <label
+        >Ref. ID
+        <input name="ref_id" placeholder="Reference ID" />
+      </label>
+      <label>
+        Note
+        <input name="note" placeholder="Optional note" />
+      </label>
+      <button type="submit">Issue</button>
+    </fieldset>
+  </form>
+
+  <!-- Transfer -->
+  <form
+    hx-post="/ui/parts/{{ part.id }}/movements/transfer"
+    hx-target="#movements"
+    hx-swap="outerHTML"
+  >
+    <fieldset>
+      <legend>Transfer</legend>
+      <label>
+        From
+        <select name="from_location" required>
+          {% for code in location_codes %}
+          <option value="{{ code }}">{{ code }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        To
+        <select name="to_location" required>
+          {% for code in location_codes %}
+          <option value="{{ code }}">{{ code }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        Quantity
+        <input
+          type="number"
+          name="qty"
+          step="0.000001"
+          min="0.000001"
+          required
+        />
+      </label>
+      <label
+        >Ref. Type
+        <select name="ref_type"></select>
+      </label>
+      <label
+        >Ref. ID
+        <input name="ref_id" placeholder="Reference ID" />
+      </label>
+      <label>
+        Note
+        <input name="note" placeholder="Optional note" />
+      </label>
+      <button type="submit">Transfer</button>
+    </fieldset>
+  </form>
+
+  <!-- Adjust -->
+  <form
+    hx-post="/ui/parts/{{ part.id }}/movements/adjust"
+    hx-target="#movements"
+    hx-swap="outerHTML"
+  >
+    <fieldset>
+      <legend>Adjust</legend>
+      <label>
+        Location
+        <select name="location_code" required>
+          {% for code in location_codes %}
+          <option value="{{ code }}">{{ code }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        Quantity
+        <input
+          type="number"
+          name="qty"
+          step="0.000001"
+          min="0.000001"
+          required
+        />
+      </label>
+      <label>
+        Direction
+        <select name="direction" required>
+          <option value="1">+ Add</option>
+          <option value="-1">- Subtract</option>
+        </select>
+      </label>
+      <label
+        >Ref. Type
+        <select name="ref_type"></select>
+      </label>
+      <label
+        >Ref. ID
+        <input name="ref_id" placeholder="Reference ID" />
+      </label>
+      <label>
+        Note
+        <input name="note" placeholder="Optional note" />
+      </label>
+      <button type="submit">Adjust</button>
+    </fieldset>
+  </form>
+</div>
+
+<h4>Recent movements</h4>
+<table>
+  <thead>
+    <tr>
+      <th>Timestamp</th>
+      <th>Reason</th>
+      <th>Location</th>
+      <th>Qty</th>
+      <th>Ref</th>
+      <th>Note</th>
+      <th>User</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for m in rows %}
+    <tr>
+      <td>{{ m.ts }}</td>
+      <td>{{ m.reason }}</td>
+      <td>{{ m.location_code }}</td>
+      <td>{{ m.qty }}</td>
+      <td>{{ (m.ref_type or '-') ~ (':' ~ m.ref_id if m.ref_id else '') }}</td>
+      <td>{{ m.note or '-' }}</td>
+      <td>{{ m.user or '-' }}</td>
+    </tr>
+    {% else %}
+    <tr>
+      <td colspan="7">No movements.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Trigger a stock refresh after this fragment is swapped in -->
+<div
+  hx-get="/ui/parts/{{ part.id }}/stock"
+  hx-trigger="load"
+  hx-target="#stock"
+  hx-swap="outerHTML"
+></div>

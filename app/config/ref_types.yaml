@@ -1,0 +1,9 @@
+# code: prefix
+PO: "PO-"
+RMA: "RMA-"
+WO: "WO-"
+JOB: "JOB-"
+COUNT: "COUNT-"
+SCRAP: "SCRAP-"
+MOVE: "MOV-"
+ADJ: "ADJ-"

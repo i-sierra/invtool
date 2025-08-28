@@ -1,0 +1,28 @@
+<table id="parts-table">
+    <thead>
+        <tr>
+            <th>IPN</th>
+            <th>Description</th>
+            <th>Manufacturer / MPN</th>
+            <th>Type</th>
+            <th>Compound</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in parts %}
+        <tr>
+            <td><a href="/ui/parts/{{p.id}}">{{ p.ipn }}</a></td>
+            <td>{{ p.description }}</td>
+            <td>{{ p.manufacturer or "-" }} / {{ p.manufacturer_pn or "-" }}</td>
+            <td>{{ type_map.get(p.part_type_id, "-") }}</td>
+            <td>{{ "Yes" if p.is_compound else "No" }}</td>
+            <td><a href="/ui/parts/{{p.id}}/edit">Edit</a></td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6">No results.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

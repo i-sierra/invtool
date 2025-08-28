@@ -1,0 +1,41 @@
+{% extends "base.html" %} {% block content %}
+<h2>Distributors (catalog)</h2>
+
+<form method="post" action="/ui/distributors/new" class="inline">
+    <input name="code" placeholder="code (e.g., mouser)" required />
+    <input name="name" placeholder="name (e.g., Mouser)" required />
+    <button type="submit">Add</button>
+</form>
+
+<table>
+    <thead>
+        <tr>
+            <th>Code</th>
+            <th>Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in items %}
+        <tr>
+            <td>{{ d.code }}</td>
+            <td>
+                <form method="post" action="/ui/distributors/{{ d.id }}/edit" class="inline">
+                    <input name="name" value="{{ d.name }}" />
+                    <button type="submit">Save</button>
+                </form>
+            </td>
+            <td>
+                <form method="post" action="/ui/distributors/{{ d.id }}/delete">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="3">No distributors.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
