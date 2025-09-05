@@ -1,47 +1,68 @@
+"""Database setup (SQLAlchemy 2.x, sync engine)."""
+
+from __future__ import annotations
+
+from collections.abc import Iterator
+from pathlib import Path
+from typing import Any
+
 from sqlalchemy import create_engine, event
+from sqlalchemy.engine import URL
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-from app.core.config import settings
+from app.config import get_settings
+
+settings = get_settings()
 
 
 class Base(DeclarativeBase):
-    pass
+    """Declarative base class for ORM models."""
 
 
-# Check if it is SQLite
-db_url = settings.resolved_database_url
-is_sqlite = db_url.startswith("sqlite:///")
+def _resolve_sqlite_url(url: str) -> URL | str:
+    """
+    Ensure SQLite path points to a project-local file and the directory exists.
+    Keeps other URLs untouched.
+    """
+    if not url.startswith("sqlite:///"):
+        return url  # Non-SQLite or already a full URL
 
-connect_args = {}
-if is_sqlite:
-    # Needed for use with threads in AGSI server
-    connect_args["check_same_thread"] = False
+    # Remove scheme and compute path relative to project root
+    raw = url.removeprefix("sqlite:///")
+    path = Path(raw)
+    if not path.is_absolute():
+        project_root = Path(__file__).resolve().parents[1]  # repo root (folder containing /app)
+        path = (project_root / path).resolve()
 
-engine = create_engine(
-    db_url,
-    connect_args=connect_args,
-    pool_pre_ping=True,
-    future=True,
-)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    return URL.create(drivername="sqlite", database=str(path))
 
-# Pragmas for local robustness
-if is_sqlite:
+
+database_url = _resolve_sqlite_url(settings.database_url)
+
+connect_args: dict[str, Any] = {}
+if (isinstance(database_url, str) and database_url.startswith("sqlite")) or (
+    isinstance(database_url, URL) and database_url.get_backend_name() == "sqlite"
+):
+    connect_args = {"check_same_thread": False}
+
+engine = create_engine(database_url, pool_pre_ping=True, connect_args=connect_args)
+SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+
+if (isinstance(database_url, str) and database_url.startswith("sqlite")) or (
+    isinstance(database_url, URL) and database_url.get_backend_name() == "sqlite"
+):
 
     @event.listens_for(engine, "connect")
-    def set_sqlite_pragma(dbapi_connection, connection_record):
+    def _sqlite_pragma(dbapi_connection, _) -> None:
         cursor = dbapi_connection.cursor()
-        # WAL mode improves concurrency in single process; enable FK by default
-        cursor.execute("PRAGMA journal_mode=WAL;")
-        cursor.execute("PRAGMA foreign_keys=ON;")
-        # For better durability: synchronous=NORMAL (fast) or FULL (secure)
-        cursor.execute("PRAGMA synchronous=NORMAL;")
+        cursor.execute("PRAGMA journal_mode=WAL")
+        cursor.execute("PRAGMA synchronous=NORMAL")
         cursor.close()
 
 
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False, future=True)
-
-
-def get_db():
+def get_session() -> Iterator:
+    """Provide a DB session per request."""
     db = SessionLocal()
     try:
         yield db

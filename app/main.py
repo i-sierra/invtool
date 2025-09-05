@@ -1,48 +1,29 @@
+"""API entrypoint and composition."""
+
+from pathlib import Path
+
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
+from starlette.staticfiles import StaticFiles
 
-from app.routers import (
-    config_ref,
-    distributors,
-    locations,
-    part_distributors,
-    part_documents,
-    part_types,
-    parts,
-    purchase_orders,
-    reports,
-    stock,
-    ui_distributor_catalog,
-    ui_parts,
-    ui_purchase_orders,
-    ui_reports,
-)
+from app.config import get_settings
+from app.routes import health, home
 
-app = FastAPI(title="Inventory Management System")
+settings = get_settings()
 
 
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+def create_app() -> FastAPI:
+    """Create and configure FastAPI app instance."""
+    app = FastAPI(title=settings.app_name, debug=settings.debug)
+
+    # Static files (Bootstrap overrides & compiled CSS live under /static/)
+    static_dir = Path(__file__).parent / "static"
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
+
+    # Include routers
+    app.include_router(health.router)
+    app.include_router(home.router)
+
+    return app
 
 
-# ---- API routers ----
-app.include_router(config_ref.router)
-app.include_router(distributors.router)
-app.include_router(locations.router)
-app.include_router(parts.router)
-app.include_router(part_distributors.router)
-app.include_router(part_documents.router)
-app.include_router(part_types.router)
-app.include_router(purchase_orders.router)
-app.include_router(reports.router)
-app.include_router(stock.router)
-
-# ---- UI routers ----
-app.include_router(ui_distributor_catalog.router)
-app.include_router(ui_parts.router)
-app.include_router(ui_purchase_orders.router)
-app.include_router(ui_reports.router)
-
-# ---- Static files for UI ----
-app.mount("/static", StaticFiles(directory="app/web/static"), name="static")
+app = create_app()
