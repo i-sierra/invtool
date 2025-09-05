@@ -1,0 +1,79 @@
+{
+    "version": "2.0.0",
+    "options": {
+        "shell": {
+            "executable": "cmd.exe",
+            "args": [
+                "/d",
+                "/c"
+            ]
+        }
+    },
+    "tasks": [
+        {
+            "label": "init",
+            "type": "shell",
+            "command": "tasks.bat init",
+            "group": "build"
+        },
+        {
+            "label": "install",
+            "type": "shell",
+            "command": "tasks.bat install"
+        },
+        {
+            "label": "pre-commit",
+            "type": "shell",
+            "command": "tasks.bat pre-commit"
+        },
+        {
+            "label": "lint",
+            "type": "shell",
+            "command": "tasks.bat lint"
+        },
+        {
+            "label": "format",
+            "type": "shell",
+            "command": "tasks.bat format"
+        },
+        {
+            "label": "type",
+            "type": "shell",
+            "command": "tasks.bat type"
+        },
+        {
+            "label": "test",
+            "type": "shell",
+            "command": "tasks.bat test",
+            "group": "test"
+        },
+        {
+            "label": "run",
+            "type": "shell",
+            "command": "tasks.bat run",
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "css",
+            "type": "shell",
+            "command": "tasks.bat css"
+        },
+        {
+            "label": "test-report",
+            "type": "shell",
+            "command": "tasks.bat report",
+            "group": "test"
+        },
+        {
+            "label": "open-coverage",
+            "type": "shell",
+            "command": "start \"\" htmlcov\\index.html"
+        },
+        {
+            "label": "open-tests-html",
+            "type": "shell",
+            "command": "start \"\" reports\\tests.html"
+        }
+    ]
+}

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import atexit
 from collections.abc import Iterator
 from pathlib import Path
 from typing import Any
@@ -48,6 +49,7 @@ if (isinstance(database_url, str) and database_url.startswith("sqlite")) or (
 
 engine = create_engine(database_url, pool_pre_ping=True, connect_args=connect_args)
 SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+atexit.register(lambda: engine.dispose())
 
 if (isinstance(database_url, str) and database_url.startswith("sqlite")) or (
     isinstance(database_url, URL) and database_url.get_backend_name() == "sqlite"

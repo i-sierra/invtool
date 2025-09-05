@@ -1,19 +1,14 @@
 """Web routes (HTML) using Jinja2 + HTMX."""
 
-from pathlib import Path
-
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from starlette.templating import _TemplateResponse
 
-TEMPLATES_DIR = Path(__file__).resolve().parents[1] / "templates"
-templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+from app.web import render
 
 router = APIRouter()
 
 
 @router.get("/", response_class=HTMLResponse, tags=["web"])
-def index(request: Request) -> _TemplateResponse:
+def index(request: Request) -> HTMLResponse:
     """Render home page."""
-    return templates.TemplateResponse(request, "index.html", {"title": "Inventory Manager"})
+    return render(request, "index.html", {"title": "Inventory Manager"})

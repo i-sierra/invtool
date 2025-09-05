@@ -1,7 +1,16 @@
+exclude: |
+  (?x)^(
+    reports/|
+    htmlcov/|
+    instance/|
+    app/static/css/
+  )
 repos:
-  - repo: https://github.com/psf/black
-    rev: 24.4.2
-    hooks: [{ id: black }]
+  # - repo: https://github.com/psf/black
+  #   rev: 24.4.2
+  #   hooks:
+  #     - id: black
+  #       args: ["--check", "--diff"]
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.4.2
     hooks: [{ id: ruff }, { id: ruff-format }]

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "iris-invtool"
-version = "0.1.0"
+version = "0.1.2"
 description = "Inventory management web app for IRIS"
 requires-python = ">=3.12"
 dependencies = [
@@ -16,6 +16,7 @@ dependencies = [
     "pydantic>=2.6.4",
     "pydantic-settings>=2.2.1",
     "python-multipart>=0.0.9",
+    "itsdangerous>=2.1",
 ]
 
 [project.optional-dependencies]
@@ -29,6 +30,7 @@ dev = [
     "isort>=5.13.0",
     "mypy>=1.9.0",
     "types-Jinja2>=2.11.9",
+    "pytest-html>=4.1.1",
 ]
 
 [tool.setuptools.packages.find]

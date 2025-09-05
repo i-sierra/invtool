@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     debug: bool = Field(default=True)
     database_url: str = Field(default="sqlite:///./instance/app.db")
     max_upload_mb: int = Field(default=10)
+    secret_key: str = Field(default="dev-secret-key-change-me")
 
     model_config = SettingsConfigDict(
         env_file=".env",

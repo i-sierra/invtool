@@ -16,6 +16,7 @@ if /I "%TASK%"=="type"  goto :type
 if /I "%TASK%"=="test"  goto :test
 if /I "%TASK%"=="run"  goto :run
 if /I "%TASK%"=="css"  goto :css
+if /I "%TASK%"=="report"  goto :report
 if /I "%TASK%"=="help"  goto :help
 
 echo Unknown task: %TASK%
@@ -68,6 +69,13 @@ if %ERRORLEVEL%==0 (
   echo  Instala Dart Sass (ej.: npm install -g sass) si quieres compilar SCSS.
 )
 exit /b 0
+
+:report
+if not exist reports mkdir reports
+pytest --cov=app --cov-report=term-missing --cov-report=html ^
+  --html=reports\tests.html --self-contained-html ^
+  --junitxml=reports\junit.xml
+exit /b %ERRORLEVEL%
 
 :help
 echo Uso: tasks ^<tarea^>

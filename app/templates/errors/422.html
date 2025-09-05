@@ -1,0 +1,12 @@
+{% extends "base.html" %} {% block content %}
+<div class="py-4">
+  <h1 class="h4 mb-3">Validation error</h1>
+  <ul class="list-group">
+    {% for e in errors %}
+    <li class="list-group-item">
+      <code>{{ e["loc"]|join(".") }}</code>: {{ e["msg"] }}
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
